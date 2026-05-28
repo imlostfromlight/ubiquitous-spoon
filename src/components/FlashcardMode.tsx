@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { questions } from "../data";
+import { allQuestions } from "../data";
 import { useApp } from "../context";
 
 interface Props { onBack: () => void; }
@@ -14,14 +14,14 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 const UI = {
-  ru: { back: "← Назад", title: "Карточки", hint: "Нажмите для ответа", answer: "Ответ", know: "Знаю ✓", repeat: "Повторить", done: "Готово!", doneDesc: (t: number) => `Вы прошли все ${t} карточек.`, doneSub: (k: number, r: number) => `Знаете: ${k} · Повторить: ${r}`, restart: "Начать заново", billet: "Билет", question: "Вопрос" },
-  kz: { back: "← Артқа", title: "Карточкалар", hint: "Жауап үшін басыңыз", answer: "Жауап", know: "Білемін ✓", repeat: "Қайталау", done: "Дайын!", doneDesc: (t: number) => `Сіз барлық ${t} карточканы өттіңіз.`, doneDesc2: undefined, doneDesc3: undefined, doneSub: (k: number, r: number) => `Білемін: ${k} · Қайталау: ${r}`, restart: "Қайта бастау", billet: "Билет", question: "Сұрақ" },
+  ru: { back: "← Назад", title: "Карточки", hint: "Нажмите для ответа", answer: "Ответ", know: "Знаю ✓", repeat: "Повторить", done: "Готово!", doneDesc: (t: number) => `Вы прошли все ${t} карточек.`, doneSub: (k: number, r: number) => `Знаете: ${k} · Повторить: ${r}`, restart: "Начать заново", billet: "Билет", question: "Вопрос", extra: "Доп." },
+  kz: { back: "← Артқа", title: "Карточкалар", hint: "Жауап үшін басыңыз", answer: "Жауап", know: "Білемін ✓", repeat: "Қайталау", done: "Дайын!", doneDesc: (t: number) => `Сіз барлық ${t} карточканы өттіңіз.`, doneSub: (k: number, r: number) => `Білемін: ${k} · Қайталау: ${r}`, restart: "Қайта бастау", billet: "Билет", question: "Сұрақ", extra: "Қос." },
 };
 
 export default function FlashcardMode({ onBack }: Props) {
   const { lang, progress, markKnown, resetFlashcardProgress } = useApp();
   const t = UI[lang];
-  const [deck, setDeck] = useState(() => shuffle(questions));
+  const [deck, setDeck] = useState(() => shuffle(allQuestions));
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
@@ -44,7 +44,7 @@ export default function FlashcardMode({ onBack }: Props) {
 
   const handleRestart = () => {
     resetFlashcardProgress();
-    setDeck(shuffle(questions));
+    setDeck(shuffle(allQuestions));
     setIndex(0);
     setFlipped(false);
   };
@@ -77,7 +77,7 @@ export default function FlashcardMode({ onBack }: Props) {
           <div className={`card-wrap ${flipped ? "flipped" : ""}`} onClick={handleFlip}>
             <div className="card-inner">
               <div className="card-front">
-                <span className="card-billet">{t.billet} {current.billetNum} · {t.question} {current.questionNum}</span>
+                <span className="card-billet">{current.billetNum > 0 ? `${t.billet} ${current.billetNum} · ${t.question} ${current.questionNum}` : `${t.extra} · №${current.questionNum}`}</span>
                 <p className="card-question">{current[lang].question}</p>
                 <span className="card-hint">{t.hint}</span>
               </div>

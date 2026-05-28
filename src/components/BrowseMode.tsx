@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { questions } from "../data";
+import { questions, extraQuestions } from "../data";
 import { useApp } from "../context";
 
 interface Props { onBack: () => void; }
 
 const UI = {
-  ru: { back: "← Назад", title: "Все билеты", billet: "Билет №", show: "Показать ответ", hide: "Скрыть ответ", q: "Вопрос" },
-  kz: { back: "← Артқа", title: "Барлық билеттер", billet: "Билет №", show: "Жауапты көрсету", hide: "Жауапты жасыру", q: "Сұрақ" },
+  ru: { back: "← Назад", title: "Все билеты", billet: "Билет №", show: "Показать ответ", hide: "Скрыть ответ", q: "Вопрос", extraTitle: "Дополнительные материалы", extraQ: "№" },
+  kz: { back: "← Артқа", title: "Барлық билеттер", billet: "Билет №", show: "Жауапты көрсету", hide: "Жауапты жасыру", q: "Сұрақ", extraTitle: "Қосымша материалдар", extraQ: "№" },
 };
 
 export default function BrowseMode({ onBack }: Props) {
@@ -14,6 +14,7 @@ export default function BrowseMode({ onBack }: Props) {
   const t = UI[lang];
   const billets = Array.from(new Set(questions.map((q) => q.billetNum))).sort((a, b) => a - b);
   const [openBillet, setOpenBillet] = useState<number | null>(null);
+  const [openExtra, setOpenExtra] = useState(false);
   const [openAnswer, setOpenAnswer] = useState<Set<string>>(new Set());
 
   const toggleBillet = (n: number) => setOpenBillet((prev) => (prev === n ? null : n));
@@ -68,6 +69,34 @@ export default function BrowseMode({ onBack }: Props) {
             </div>
           );
         })}
+        <div className="billet-block">
+          <button className={`billet-header ${openExtra ? "open" : ""}`} onClick={() => setOpenExtra((v) => !v)}>
+            <span>📚 {t.extraTitle}</span>
+            <span className="billet-chevron">{openExtra ? "▲" : "▼"}</span>
+          </button>
+          {openExtra && (
+            <div className="billet-questions">
+              {extraQuestions.map((q) => (
+                <div key={q.id} className="browse-question">
+                  <div className="browse-q-header">
+                    <span className="browse-q-num">{t.extraQ}{q.questionNum}</span>
+                    <p className="browse-q-text">{q[lang].question}</p>
+                    <button className="btn-show-answer" onClick={() => toggleAnswer(q.id)}>
+                      {openAnswer.has(q.id) ? t.hide : t.show}
+                    </button>
+                  </div>
+                  {openAnswer.has(q.id) && (
+                    <div className="browse-answer">
+                      {q[lang].answer.split("\n").map((line, i) => (
+                        <p key={i}>{line}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

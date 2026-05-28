@@ -4,7 +4,7 @@ import QuizMode from "./components/QuizMode";
 import BrowseMode from "./components/BrowseMode";
 import BilletMode from "./components/BilletMode";
 import { useApp } from "./context";
-import { questions } from "./data";
+import { allQuestions } from "./data";
 import "./App.css";
 
 type Mode = "home" | "flashcard" | "quiz" | "browse" | "billet";
@@ -13,7 +13,7 @@ const UI = {
   ru: {
     badge: "Итоговый экзамен",
     title: "Связь — основное средство управления войсками",
-    sub: (n: number) => `${n} вопросов · 24 билета · 4 режима`,
+    sub: (n: number) => `${n} вопросов · 24 билета + доп. материалы`,
     flashcard: "Карточки", flashDesc: "Все вопросы вперемешку",
     quiz: "Тест", quizDesc: "Выберите правильный вариант из четырёх",
     billet: "По билетам", billetDesc: "Выберите билет и отвечайте по порядку",
@@ -26,7 +26,7 @@ const UI = {
   kz: {
     badge: "Қорытынды емтихан",
     title: "Байланыс — әскерді басқарудың негізгі құралы",
-    sub: (n: number) => `${n} сұрақ · 24 билет · 4 режим`,
+    sub: (n: number) => `${n} сұрақ · 24 билет + қос. материалдар`,
     flashcard: "Карточкалар", flashDesc: "Барлық сұрақтар аралас",
     quiz: "Тест", quizDesc: "Төрт нұсқадан дұрыс жауапты таңдаңыз",
     billet: "Билет бойынша", billetDesc: "Билетті таңдап, кезекпен жауап беріңіз",
@@ -42,7 +42,7 @@ export default function App() {
   const [mode, setMode] = useState<Mode>("home");
   const { lang, setLang, progress, resetAll } = useApp();
   const t = UI[lang];
-  const total = questions.length;
+  const total = allQuestions.length;
 
   if (mode === "flashcard") return <FlashcardMode onBack={() => setMode("home")} />;
   if (mode === "quiz")      return <QuizMode      onBack={() => setMode("home")} />;

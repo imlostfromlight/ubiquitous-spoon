@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { questions } from "../data";
+import { allQuestions } from "../data";
 import type { Question } from "../data";
 import { useApp } from "../context";
 
@@ -42,7 +42,7 @@ function truncate(text: string, max = 130) {
 export default function QuizMode({ onBack }: Props) {
   const { lang, recordQuizResult } = useApp();
   const t = UI[lang];
-  const quiz = useMemo(() => buildQuiz(questions, lang), [lang]);
+  const quiz = useMemo(() => buildQuiz(allQuestions, lang), [lang]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(() => new Array(quiz.length).fill(null));
   const [finished, setFinished] = useState(false);
@@ -106,7 +106,7 @@ export default function QuizMode({ onBack }: Props) {
       </div>
 
       <div className="quiz-wrap">
-        <span className="card-billet">{t.billet} {current.q.billetNum} · {t.question} {current.q.questionNum}</span>
+        <span className="card-billet">{current.q.billetNum > 0 ? `${t.billet} ${current.q.billetNum} · ${t.question} ${current.q.questionNum}` : `Доп. · №${current.q.questionNum}`}</span>
         <h2 className="quiz-question">{current.q[lang].question}</h2>
 
         <div className="options-list">
