@@ -91,10 +91,13 @@ button { cursor: pointer; font-family: inherit; border: none; }
 }
 .mode-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+  .mode-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 400px) {
   .mode-grid { grid-template-columns: 1fr; }
 }
 .mode-card {
@@ -437,6 +440,79 @@ button { cursor: pointer; font-family: inherit; border: none; }
   transition: background .15s, border-color .15s;
 }
 .btn-reset:hover { background: #7f1d1d30; border-color: var(--red); }
+
+/* ── Billet Grid ──────────────────────────────────────── */
+.billet-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .billet-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.billet-tile {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: border-color .15s, transform .12s, box-shadow .15s;
+  cursor: pointer;
+}
+.billet-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px #4f8ef718;
+}
+.billet-tile-done {
+  border-color: #16a34a80;
+  background: #14532d18;
+}
+.billet-tile-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.billet-tile-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+}
+.billet-tile-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.dot-known {
+  background: var(--green);
+  border-color: #16a34a;
+}
+
+/* ── Billet Nav ───────────────────────────────────────── */
+.billet-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.card-actions-inline {
+  display: flex;
+  gap: 10px;
+}
 
 /* ── Browse Mode ──────────────────────────────────────── */
 .browse-list { display: flex; flex-direction: column; gap: 8px; }

@@ -2,47 +2,38 @@ import { useState } from "react";
 import FlashcardMode from "./components/FlashcardMode";
 import QuizMode from "./components/QuizMode";
 import BrowseMode from "./components/BrowseMode";
+import BilletMode from "./components/BilletMode";
 import { useApp } from "./context";
 import { questions } from "./data";
 import "./App.css";
 
-type Mode = "home" | "flashcard" | "quiz" | "browse";
+type Mode = "home" | "flashcard" | "quiz" | "browse" | "billet";
 
 const UI = {
   ru: {
     badge: "Итоговый экзамен",
     title: "Связь — основное средство управления войсками",
-    sub: (n: number) => `${n} вопросов · 24 билета · 3 режима`,
-    flashcard: "Карточки",
-    flashDesc: "Нажмите на карточку — увидите ответ",
-    quiz: "Тест",
-    quizDesc: "Выберите правильный вариант из четырёх",
-    browse: "Все билеты",
-    browseDesc: "Просмотр всех вопросов и ответов",
+    sub: (n: number) => `${n} вопросов · 24 билета · 4 режима`,
+    flashcard: "Карточки", flashDesc: "Все вопросы вперемешку",
+    quiz: "Тест", quizDesc: "Выберите правильный вариант из четырёх",
+    billet: "По билетам", billetDesc: "Выберите билет и отвечайте по порядку",
+    browse: "Все билеты", browseDesc: "Просмотр всех вопросов и ответов",
     progressTitle: "Мой прогресс",
-    known: "Изучено карточек",
-    bestScore: "Лучший результат теста",
-    attempts: "Попыток теста",
-    of: "из",
-    noAttempts: "Ещё не проходили",
+    known: "Изучено карточек", bestScore: "Лучший результат теста",
+    attempts: "Попыток теста", of: "из", noAttempts: "Ещё не проходили",
     resetAll: "Сбросить прогресс",
   },
   kz: {
     badge: "Қорытынды емтихан",
     title: "Байланыс — әскерді басқарудың негізгі құралы",
-    sub: (n: number) => `${n} сұрақ · 24 билет · 3 режим`,
-    flashcard: "Карточкалар",
-    flashDesc: "Карточкаға басыңыз — жауапты көресіз",
-    quiz: "Тест",
-    quizDesc: "Төрт нұсқадан дұрыс жауапты таңдаңыз",
-    browse: "Барлық билеттер",
-    browseDesc: "Барлық сұрақтар мен жауаптарды қарау",
+    sub: (n: number) => `${n} сұрақ · 24 билет · 4 режим`,
+    flashcard: "Карточкалар", flashDesc: "Барлық сұрақтар аралас",
+    quiz: "Тест", quizDesc: "Төрт нұсқадан дұрыс жауапты таңдаңыз",
+    billet: "Билет бойынша", billetDesc: "Билетті таңдап, кезекпен жауап беріңіз",
+    browse: "Барлық билеттер", browseDesc: "Барлық сұрақтар мен жауаптарды қарау",
     progressTitle: "Менің прогресім",
-    known: "Үйренілген карточкалар",
-    bestScore: "Тесттің үздік нәтижесі",
-    attempts: "Тест əрекеттері",
-    of: "/",
-    noAttempts: "Әлі өтпеген",
+    known: "Үйренілген карточкалар", bestScore: "Тесттің үздік нәтижесі",
+    attempts: "Тест əрекеттері", of: "/", noAttempts: "Әлі өтпеген",
     resetAll: "Прогресті тастау",
   },
 };
@@ -54,13 +45,13 @@ export default function App() {
   const total = questions.length;
 
   if (mode === "flashcard") return <FlashcardMode onBack={() => setMode("home")} />;
-  if (mode === "quiz") return <QuizMode onBack={() => setMode("home")} />;
-  if (mode === "browse") return <BrowseMode onBack={() => setMode("home")} />;
+  if (mode === "quiz")      return <QuizMode      onBack={() => setMode("home")} />;
+  if (mode === "browse")    return <BrowseMode    onBack={() => setMode("home")} />;
+  if (mode === "billet")    return <BilletMode    onBack={() => setMode("home")} />;
 
   const knownPct = Math.round((progress.knownCards.length / total) * 100);
-  const bestPct = progress.quizAttempts > 0
-    ? Math.round((progress.quizBestScore / total) * 100)
-    : null;
+  const bestPct  = progress.quizAttempts > 0
+    ? Math.round((progress.quizBestScore / total) * 100) : null;
 
   return (
     <div className="home">
@@ -79,6 +70,11 @@ export default function App() {
             <span className="mode-icon">🃏</span>
             <span className="mode-name">{t.flashcard}</span>
             <span className="mode-desc">{t.flashDesc}</span>
+          </button>
+          <button className="mode-card" onClick={() => setMode("billet")}>
+            <span className="mode-icon">📋</span>
+            <span className="mode-name">{t.billet}</span>
+            <span className="mode-desc">{t.billetDesc}</span>
           </button>
           <button className="mode-card" onClick={() => setMode("quiz")}>
             <span className="mode-icon">✅</span>
