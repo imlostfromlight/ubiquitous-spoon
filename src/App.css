@@ -377,6 +377,15 @@ button { cursor: pointer; font-family: inherit; border: none; }
 .option.wrong .opt-letter { background: #dc2626; border-color: var(--red); color: #fff; }
 .opt-text { flex: 1; }
 
+.quiz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.quiz-nav .btn-ghost:disabled { opacity: .35; cursor: default; }
+
 .quiz-feedback { display: flex; flex-direction: column; gap: 14px; }
 .feedback-correct { font-size: 16px; font-weight: 700; color: var(--green); }
 .feedback-wrong { font-size: 16px; font-weight: 700; color: var(--red); }

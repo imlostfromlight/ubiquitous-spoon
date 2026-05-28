@@ -12,8 +12,8 @@ interface QuizQuestion {
 }
 
 const UI = {
-  ru: { back: "← Назад", title: "Тест", correct: "Верно!", wrong: "Неверно.", correctAnswer: "Правильный ответ:", next: "Следующий вопрос →", finish: "Завершить", result: "Результат", again: "Пройти снова", home: "На главную", billet: "Билет", question: "Вопрос" },
-  kz: { back: "← Артқа", title: "Тест", correct: "Дұрыс!", wrong: "Қате.", correctAnswer: "Дұрыс жауап:", next: "Келесі сұрақ →", finish: "Аяқтау", result: "Нәтиже", again: "Қайта өту", home: "Басты бетке", billet: "Билет", question: "Сұрақ" },
+  ru: { back: "← Назад", title: "Тест", correct: "Верно!", wrong: "Неверно.", correctAnswer: "Правильный ответ:", prev: "← Предыдущий", next: "Следующий вопрос →", finish: "Завершить", result: "Результат", again: "Пройти снова", home: "На главную", billet: "Билет", question: "Вопрос" },
+  kz: { back: "← Артқа", title: "Тест", correct: "Дұрыс!", wrong: "Қате.", correctAnswer: "Дұрыс жауап:", prev: "← Алдыңғы", next: "Келесі сұрақ →", finish: "Аяқтау", result: "Нәтиже", again: "Қайта өту", home: "Басты бетке", billet: "Билет", question: "Сұрақ" },
 };
 
 function shuffle<T>(arr: T[]): T[] {
@@ -44,34 +44,34 @@ export default function QuizMode({ onBack }: Props) {
   const t = UI[lang];
   const quiz = useMemo(() => buildQuiz(questions, lang), [lang]);
   const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
+  const [answers, setAnswers] = useState<(number | null)[]>(() => new Array(quiz.length).fill(null));
   const [finished, setFinished] = useState(false);
 
   const current = quiz[index];
   const total = quiz.length;
+  const selected = answers[index];
   const answered = selected !== null;
+
+  const score = answers.filter((a, i) => a !== null && a === quiz[i].correctIndex).length;
 
   const handleSelect = (i: number) => {
     if (answered) return;
-    setSelected(i);
-    if (i === current.correctIndex) setScore((s) => s + 1);
+    setAnswers((prev) => { const next = [...prev]; next[index] = i; return next; });
   };
 
-  const finalScore = score;
+  const handlePrev = () => { if (index > 0) setIndex((i) => i - 1); };
 
   const handleNext = () => {
     if (index + 1 >= total) {
-      recordQuizResult(finalScore, total);
+      recordQuizResult(score, total);
       setFinished(true);
     } else {
       setIndex((i) => i + 1);
-      setSelected(null);
     }
   };
 
   if (finished) {
-    const pct = Math.round((finalScore / total) * 100);
+    const pct = Math.round((score / total) * 100);
     return (
       <div className="page">
         <div className="top-bar">
@@ -82,7 +82,7 @@ export default function QuizMode({ onBack }: Props) {
         <div className="done-screen">
           <div className="done-emoji">{pct >= 80 ? "🏆" : pct >= 60 ? "👍" : "📚"}</div>
           <h2>{t.result}</h2>
-          <p className="score-big">{finalScore} / {total}</p>
+          <p className="score-big">{score} / {total}</p>
           <p className="done-sub">{pct}%</p>
           <div className="done-buttons">
             <button className="btn-primary" onClick={() => window.location.reload()}>{t.again}</button>
@@ -125,6 +125,15 @@ export default function QuizMode({ onBack }: Props) {
           })}
         </div>
 
+        <div className="quiz-nav">
+          <button className="btn-ghost" onClick={handlePrev} disabled={index === 0}>{t.prev}</button>
+          {answered && (
+            <button className="btn-primary" onClick={handleNext}>
+              {index + 1 < total ? t.next : t.finish}
+            </button>
+          )}
+        </div>
+
         {answered && (
           <div className="quiz-feedback">
             {selected === current.correctIndex ? (
@@ -136,9 +145,6 @@ export default function QuizMode({ onBack }: Props) {
                 <p className="feedback-answer-text">{current.options[current.correctIndex]}</p>
               </div>
             )}
-            <button className="btn-primary" onClick={handleNext}>
-              {index + 1 < total ? t.next : t.finish}
-            </button>
           </div>
         )}
       </div>
